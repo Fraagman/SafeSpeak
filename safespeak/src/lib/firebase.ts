@@ -1,6 +1,7 @@
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getAuth, signInAnonymously, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 function requireEnv(name: string, value: string | undefined): string {
   if (!value) {
@@ -32,6 +33,7 @@ const app = createFirebaseApp();
 
 export const auth: Auth = getAuth(app);
 export const db: Firestore = getFirestore(app);
+export const storage: FirebaseStorage = getStorage(app);
 
 export async function ensureAnon(): Promise<void> {
   const current = auth.currentUser;
