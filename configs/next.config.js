@@ -1,17 +1,19 @@
-import type { NextConfig } from "next";
-import withPWA from "next-pwa";
+const withPWA = require("next-pwa")({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development",
+});
 
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' blob: data:",
+  "img-src 'self' data: blob:",
+  "connect-src 'self' https://*.supabase.co wss://firestore.googleapis.com https://firestore.googleapis.com https://api.deepseek.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "connect-src 'self' https://firestore.googleapis.com https://*.supabase.co https://api.deepseek.com",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",
-].join("; ");
+].join('; ');
 
 const securityHeaders = [
   {
@@ -36,7 +38,7 @@ const securityHeaders = [
   },
 ];
 
-const baseConfig: NextConfig = {
+const baseConfig = {
   reactStrictMode: true,
   experimental: {
     typedRoutes: true,
@@ -55,11 +57,4 @@ const baseConfig: NextConfig = {
   ],
 };
 
-const withPWAConfig = withPWA({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-});
-
-const nextConfig = withPWAConfig(baseConfig);
-
-export default nextConfig;
+module.exports = withPWA(baseConfig);

@@ -7,7 +7,8 @@ export default function Settings() {
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   async function upgrade() {
-    if (!email) return alert("Enter an email");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) return alert("Enter a valid email address");
     setSending(true);
     try {
       const actionCodeSettings = { url: window.location.origin, handleCodeInApp: true };
