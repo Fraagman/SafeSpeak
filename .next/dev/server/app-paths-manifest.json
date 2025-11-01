@@ -1,0 +1,11 @@
+{
+  "/about/page": "app/about/page.js",
+  "/api/resources/route": "app/api/resources/route.js",
+  "/chat/[chatId]/page": "app/chat/[chatId]/page.js",
+  "/chat/page": "app/chat/page.js",
+  "/community/page": "app/community/page.js",
+  "/page": "app/page.js",
+  "/report/new/page": "app/report/new/page.js",
+  "/resources/page": "app/resources/page.js",
+  "/settings/page": "app/settings/page.js"
+}
