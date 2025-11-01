@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import LetterGlitch from "@/components/LetterGlitch";
 
 // Helper function to safely convert ArrayBufferLike to ArrayBuffer
 function toArrayBuffer(bufferLike: ArrayBuffer | SharedArrayBuffer | ArrayBufferView): ArrayBuffer {
@@ -376,34 +375,20 @@ export default function NewReport() {
   }
 
   return (
-    <div className="relative min-h-screen">
-      {/* LetterGlitch Background */}
-      <div className="fixed inset-0 z-0">
-        <LetterGlitch
-          glitchSpeed={50}
-          centerVignette={true}
-          outerVignette={false}
-          smooth={true}
-        />
-      </div>
-      
-      {/* Main Content */}
-      <div className="relative z-10 max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
-          <div className="mt-6 flex items-center justify-between rounded-full border border-white/10 px-4 py-2 backdrop-blur">
-          <h2 className="font-semibold tracking-tight text-white">New Report</h2>
-        </div>
+    <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 space-y-4">
+        <h2 className="text-2xl font-bold text-gray-800">New Report</h2>
         
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6 space-y-4">
+        <div className="bg-white rounded-lg shadow p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Describe what happened
             </label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={8}
-              className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur p-3 text-white placeholder-white/50 focus:ring-2 focus:ring-white/20 focus:border-transparent focus:outline-none"
+              className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Describe what happened..."
               disabled={loading}
             />
@@ -413,13 +398,13 @@ export default function NewReport() {
             <button
               onClick={handleRedact}
               disabled={!text.trim() || loading}
-              className="rounded-full border border-white/10 bg-white/10 backdrop-blur px-4 py-2 font-medium text-white hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Redact PII
             </button>
             
-            <label className="cursor-pointer rounded-full border border-white/10 bg-white/5 backdrop-blur px-4 py-2 hover:bg-white/10 transition-colors">
-              <span className="text-sm font-medium text-white">Add Image</span>
+            <label className="cursor-pointer bg-white border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-50">
+              <span className="text-sm font-medium">Add Image</span>
               <input
                 type="file"
                 accept="image/*"
@@ -430,33 +415,33 @@ export default function NewReport() {
             </label>
             
             <div className="flex items-center space-x-2 ml-auto">
-              <span className="text-sm text-white/70">Network:</span>
+              <span className="text-sm text-gray-600">Network:</span>
               <select
                 value={network}
                 onChange={(e) => setNetwork(e.target.value as any)}
-                className="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-2 text-sm text-white focus:ring-2 focus:ring-white/20 focus:border-transparent focus:outline-none"
+                className="border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loading}
               >
-                <option value="sepolia" className="bg-gray-900">Sepolia (Ethereum)</option>
-                <option value="amoy" className="bg-gray-900">Polygon Amoy</option>
+                <option value="sepolia">Sepolia (Ethereum)</option>
+                <option value="amoy">Polygon Amoy</option>
               </select>
             </div>
           </div>
           
           {redacted && (
-            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4">
-              <h3 className="font-medium text-white mb-1">Redacted Preview:</h3>
-              <p className="whitespace-pre-wrap text-white/80">{redacted}</p>
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <h3 className="font-medium text-slate-800 mb-1">Redacted Preview:</h3>
+              <p className="whitespace-pre-wrap text-slate-700">{redacted}</p>
             </div>
           )}
           
           {previewUrl && (
-            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4">
-              <div className="text-sm text-white/70 mb-1">Image Preview:</div>
+            <div className="border border-gray-200 rounded-md p-2">
+              <div className="text-sm text-gray-600 mb-1">Image Preview:</div>
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="max-h-64 max-w-full rounded-xl object-contain border border-white/10"
+                className="max-h-64 max-w-full rounded-md object-contain border border-gray-200"
               />
             </div>
           )}
@@ -470,15 +455,15 @@ export default function NewReport() {
                     type="checkbox"
                     checked={compress}
                     onChange={(e) => setCompress(e.target.checked)}
-                    className="h-4 w-4 rounded border-white/20 bg-white/10 text-emerald-400 focus:ring-emerald-400 focus:ring-offset-0"
+                    className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                     disabled={loading}
                   />
                 </div>
                 <div className="text-sm">
-                  <label htmlFor="compress-toggle" className="font-medium text-white/90">
+                  <label htmlFor="compress-toggle" className="font-medium text-gray-700">
                     Compress large images
                   </label>
-                  <p className="text-xs text-white/60">
+                  <p className="text-xs text-gray-500">
                     Resize large images before blur (faster, safer)
                   </p>
                 </div>
@@ -488,10 +473,10 @@ export default function NewReport() {
             <button
               onClick={onSubmit}
               disabled={loading || !text.trim()}
-              className={`w-full rounded-full py-3 px-4 font-medium transition-colors ${
+              className={`w-full py-3 px-4 rounded-md font-medium ${
                 loading || !text.trim()
-                  ? 'bg-white/10 border border-white/10 text-white/50 cursor-not-allowed'
-                  : 'bg-white text-black hover:bg-white/90'
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-emerald-600 hover:bg-emerald-700 text-white'
               }`}
             >
               {loading ? 'Submitting...' : 'Submit Report'}
@@ -501,8 +486,8 @@ export default function NewReport() {
       </div>
       
       <div className="lg:col-span-1">
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6 sticky top-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Status</h3>
+        <div className="bg-white rounded-lg shadow p-6 sticky top-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Status</h3>
           <div 
             className="space-y-3 text-sm"
             aria-live="polite"
@@ -516,18 +501,18 @@ export default function NewReport() {
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <span className={`font-medium ${
-                      step.status === 'fail' ? 'text-red-400' : 'text-white/90'
+                      step.status === 'fail' ? 'text-red-600' : 'text-gray-700'
                     }`}>
                       {step.label}
                     </span>
                     {step.note && (
-                      <span className="text-xs text-white/60 ml-2 whitespace-nowrap">
+                      <span className="text-xs text-gray-500 ml-2 whitespace-nowrap">
                         {step.note}
                       </span>
                     )}
                   </div>
                   {step.error && (
-                    <div className="mt-1 text-xs text-red-400 bg-red-500/10 p-2 rounded-xl border border-red-500/20">
+                    <div className="mt-1 text-xs text-red-500 bg-red-50 p-2 rounded">
                       {step.error}
                     </div>
                   )}
@@ -537,12 +522,12 @@ export default function NewReport() {
           </div>
           
           {showRecoveryKey && recoveryKey && (
-            <div className="mt-6 pt-4 border-t border-white/10">
+            <div className="mt-6 pt-4 border-t border-gray-200">
               <div className="flex justify-between items-center mb-2">
-                <h4 className="font-medium text-white">Recovery Key</h4>
+                <h4 className="font-medium text-gray-800">Recovery Key</h4>
                 <button
                   onClick={() => navigator.clipboard.writeText(recoveryKey)}
-                  className="text-xs text-white/70 hover:text-white transition-colors"
+                  className="text-xs text-blue-600 hover:text-blue-800"
                 >
                   Copy
                 </button>
@@ -551,19 +536,18 @@ export default function NewReport() {
                 <textarea
                   readOnly
                   value={recoveryKey}
-                  className="w-full h-32 p-2 text-xs font-mono rounded-xl border border-white/10 bg-white/5 backdrop-blur text-white focus:outline-none"
+                  className="w-full h-32 p-2 text-xs font-mono bg-gray-50 border border-gray-200 rounded-md focus:outline-none"
                 />
-                <div className="absolute top-2 right-2 text-xs text-white/60">
+                <div className="absolute top-2 right-2 text-xs text-gray-500">
                   {recoveryKey.length} chars
                 </div>
               </div>
-              <p className="mt-1 text-xs text-white/60">
+              <p className="mt-1 text-xs text-gray-500">
                 Save this key securely. You'll need it to access your report.
               </p>
             </div>
           )}
         </div>
-      </div>
       </div>
     </div>
   );

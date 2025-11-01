@@ -14,7 +14,6 @@ import {
   type Coords 
 } from "@/lib/geo";
 import { MasonryGrid, type MasonryCardData } from "@/components/ui/masonry-grid-with-scroll-animation";
-import { ParallaxBackground } from "@/components/ui/parallax-background";
 
 // Dynamic import for map component (client-only, no SSR)
 const ResourcesMap = dynamic(() => import("@/components/ResourcesMap"), {
@@ -405,9 +404,7 @@ export default function Resources() {
   }
 
   return (
-    <>
-      <ParallaxBackground />
-      <main className="w-full max-w-screen-2xl mx-auto p-6 space-y-6">
+    <main className="w-full max-w-screen-2xl mx-auto p-6 space-y-6">
       {/* Location Banner */}
       {banner.isVisible && (
         <div 
@@ -737,6 +734,5 @@ export default function Resources() {
         />
       )}
     </main>
-    </>
   );
 }
