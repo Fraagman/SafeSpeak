@@ -11,6 +11,7 @@ export default function Nav() {
           <Link href="/" className="font-semibold tracking-tight text-white">SafeSpeak</Link>
           <nav className="flex items-center gap-4 text-sm text-white/70">
             <Link href="/resources" className="hover:text-white transition-colors">Resources</Link>
+            <Link href="/about" className="hover:text-white transition-colors">About</Link>
             <Link href="/report/new" className="hover:text-white transition-colors">Report</Link>
             <Link href="/settings" className="hover:text-white transition-colors">Settings</Link>
             <Link href="/chat" className="rounded-full bg-white text-black px-3 py-1.5 hover:bg-white/90 transition">

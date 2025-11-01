@@ -1,0 +1,65 @@
+.parallax {
+  overflow: hidden;
+}
+
+.parallax__header {
+  height: 0;
+  position: relative;
+}
+
+.parallax__visuals {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: block;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.parallax__layers {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.parallax__layer-img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.parallax__layer-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.parallax__title {
+  font-size: 8rem;
+  font-weight: 800;
+  color: white;
+  text-align: center;
+}
+
+.parallax__content {
+  position: relative;
+  z-index: 1;
+  background-color: transparent;
+}
+
+.osmo-credits {
+  padding: 2rem;
+  text-align: center;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+.osmo-credits__p a {
+  color: #00bfff;
+  text-decoration: none;
+}

@@ -5,10 +5,15 @@ import Reveal from "@/components/Reveal";
 import { Parallax } from "@/components/Parallax";
 import { EvervaultCard } from "@/components/ui/evervault-card";
 import { VelocityScroll } from "@/components/ui/scroll-based-velocity";
+import { DemoOne } from "@/components/ui/demo";
+import { FeaturesSectionWithCardGradient } from "@/components/blocks/feature-section-with-card-gradient";
 
 export default function Page() {
   return (
-    <div className="mx-auto max-w-6xl px-4">
+    <div className="mx-auto max-w-6xl px-4 relative">
+      {/* Horizon Three.js background */}
+      <DemoOne />
+
       {/* Hero Section */}
       <section className="relative py-24 min-h-[80vh] flex items-center overflow-hidden">
         {/* Content */}
@@ -64,67 +69,8 @@ export default function Page() {
         className="font-display text-center text-2xl font-bold tracking-wider text-white md:text-4xl md:leading-[3rem]"
       />
 
-      {/* Features */}
-      <section className="grid gap-8 py-16 md:grid-cols-3">
-        <Reveal>
-          <div className="h-48">
-            <EvervaultCard text="Encrypt" />
-          </div>
-          <div className="text-center mt-4">
-            <h3 className="text-xl font-semibold text-white">Client‑side encryption</h3>
-            <p className="mt-2 text-white/70">Your evidence never leaves your device unencrypted.</p>
-          </div>
-        </Reveal>
-        <Reveal delay={.1}>
-          <div className="h-48">
-            <EvervaultCard text="Privacy" />
-          </div>
-          <div className="text-center mt-4">
-            <h3 className="text-xl font-semibold text-white">Face blur + EXIF strip</h3>
-            <p className="mt-2 text-white/70">Protect identities with on‑device redaction.</p>
-          </div>
-        </Reveal>
-        <Reveal delay={.2}>
-          <div className="h-48">
-            <EvervaultCard text="AI" />
-          </div>
-          <div className="text-center mt-4">
-            <h3 className="text-xl font-semibold text-white">AI triage</h3>
-            <p className="mt-2 text-white/70">Categorize and route to local help quickly.</p>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* Additional Features Section */}
-      <section className="grid gap-8 py-16 md:grid-cols-3">
-        <Reveal delay={.3}>
-          <div className="h-48">
-            <EvervaultCard text="Anonymous" />
-          </div>
-          <div className="text-center mt-4">
-            <h3 className="text-xl font-semibold text-white">Anonymous reporting</h3>
-            <p className="mt-2 text-white/70">Share your story without revealing your identity.</p>
-          </div>
-        </Reveal>
-        <Reveal delay={.4}>
-          <div className="h-48">
-            <EvervaultCard text="Verified" />
-          </div>
-          <div className="text-center mt-4">
-            <h3 className="text-xl font-semibold text-white">Verified resources</h3>
-            <p className="mt-2 text-white/70">Connect with trusted local support organizations.</p>
-          </div>
-        </Reveal>
-        <Reveal delay={.5}>
-          <div className="h-48">
-            <EvervaultCard text="Stealth" />
-          </div>
-          <div className="text-center mt-4">
-            <h3 className="text-xl font-semibold text-white">Stealth mode</h3>
-            <p className="mt-2 text-white/70">Quick exit and stealth features for your safety.</p>
-          </div>
-        </Reveal>
-      </section>
+      {/* Features Section with Card Gradient */}
+      <FeaturesSectionWithCardGradient />
 
       {/* CTA */}
       <section className="relative my-20 rounded-3xl border border-white/10 backdrop-blur-sm p-10 text-center">
@@ -137,6 +83,102 @@ export default function Page() {
             </Link>
           </div>
         </Reveal>
+      </section>
+
+      {/* About Us Section */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="relative max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">About SafeSpeak</h2>
+            <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto"></div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold text-white">Our Mission</h3>
+              <p className="text-white/80 leading-relaxed">
+                SafeSpeak is dedicated to providing a secure platform for individuals to report incidents anonymously while connecting them with verified support resources. We believe in empowering users through privacy-focused technology and community support.
+              </p>
+              <div className="pt-4">
+                <h4 className="text-lg font-medium text-white mb-3">Key Features:</h4>
+                <ul className="space-y-2">
+                  <li className="flex items-center text-white/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 mr-2"></span>
+                    End-to-end encrypted reporting
+                  </li>
+                  <li className="flex items-center text-white/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></span>
+                    AI-powered resource matching
+                  </li>
+                  <li className="flex items-center text-white/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
+                    No personal data collection
+                  </li>
+                  <li className="flex items-center text-white/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></span>
+                    Verified support network
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+              <h3 className="text-2xl font-semibold text-white mb-6">Why Choose SafeSpeak?</h3>
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <div className="bg-purple-500/20 p-2 rounded-lg mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-white">Secure & Private</h4>
+                    <p className="text-white/70 mt-1">Your privacy is our top priority. All reports are encrypted and anonymous.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="bg-blue-500/20 p-2 rounded-lg mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-white">Fast Response</h4>
+                    <p className="text-white/70 mt-1">Get connected to support resources quickly when you need them most.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="bg-emerald-500/20 p-2 rounded-lg mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-white">Trusted Network</h4>
+                    <p className="text-white/70 mt-1">Verified organizations and resources you can rely on for support.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-16 text-center">
+            <h3 className="text-2xl font-semibold text-white mb-6">Our Commitment</h3>
+            <p className="max-w-3xl mx-auto text-white/80 leading-relaxed">
+              At SafeSpeak, we're committed to creating a safer digital space for everyone. Our platform is built with cutting-edge security measures and designed with user privacy as the foundation. We continuously work to improve our services and expand our network of support resources.
+            </p>
+            <div className="mt-8">
+              <a href="/about" className="inline-flex items-center text-white hover:text-white/80 transition-colors">
+                Learn more about our mission
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

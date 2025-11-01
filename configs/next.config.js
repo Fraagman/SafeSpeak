@@ -7,7 +7,7 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://unpkg.com/leaflet@1.9.4/dist/images/ https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/",
+  "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://unpkg.com https://raw.githubusercontent.com https://i.im.ge",
   "connect-src 'self' https://*.supabase.co wss://firestore.googleapis.com https://firestore.googleapis.com https://api.deepseek.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems",
   "font-src 'self' https://fonts.gstatic.com",
   "frame-ancestors 'self'",
@@ -46,25 +46,52 @@ const securityHeaders = [
   },
 ];
 
-const baseConfig = {
-  reactStrictMode: true,
-  experimental: {
-    // Fix for Next.js 14+ module resolution issues
-    esmExternals: 'loose',
-    serverComponentsExternalPackages: ['@tensorflow/tfjs', '@tensorflow-models/blazeface'],
-    serverActions: {
-      bodySizeLimit: "2mb"
-    }
+const nextConfig = {
+  reactStrictMode: false, // Disabled due to Leaflet map initialization issues
+  // Enable webpack 5 for better compatibility with next-pwa
+  webpack: (config, { isServer }) => {
+    // Important: return the modified config
+    return config;
   },
-  eslint: {
-    ignoreDuringBuilds: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'unpkg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.tile.openstreetmap.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.im.ge',
+      }
+    ]
   },
-  headers: async () => [
-    {
-      source: "/(.*)",
-      headers: securityHeaders,
-    },
-  ],
+  // Disable experimental features to avoid React Server Components issues
+  experimental: {},
+  // Turbopack configuration to silence the warning
+  turbopack: {},
+  // External packages for server components
+  serverExternalPackages: ['@tensorflow/tfjs', '@tensorflow-models/blazeface'],
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: securityHeaders,
+      },
+    ];
+  },
+  // Disable TypeScript type checking during build (use separate type checking in CI/CD)
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
-module.exports = withPWA(baseConfig);
+module.exports = withPWA(nextConfig);

@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ensureAnon, auth, db } from "@/lib/firebase";
-import { doc, getDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, where, getDocs, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, where, getDocs, deleteDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import { genKeypair, deriveSharedKey, encryptMessage, decryptMessage } from "@/lib/chatCrypto";
 
 export default function ChatPage() {
   const { chatId } = useParams() as { chatId: string };
+  const router = useRouter();
   const [sharedKey, setSharedKey] = useState<Uint8Array | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
@@ -45,9 +46,33 @@ export default function ChatPage() {
     await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
   }
 
+  async function handleLeaveChat() {
+    await ensureAnon();
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    const chatRef = doc(db, "chats", chatId);
+    await updateDoc(chatRef, { participants: arrayRemove(uid) });
+    router.push("/chat");
+  }
+
   return (
     <main className="max-w-xl mx-auto p-4 space-y-3">
-      <h2 className="text-xl font-semibold">Secure Chat</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Secure Chat</h2>
+        <button
+          className="text-sm px-3 py-1.5 rounded bg-red-600 text-white"
+          onClick={() => {
+            const ok = window.confirm(
+              "Are you sure you want to delete this chat? This will only remove it from your list, but counselors may still see the record."
+            );
+            if (ok) {
+              void handleLeaveChat();
+            }
+          }}
+        >
+          Delete Chat
+        </button>
+      </div>
       <div className="border rounded p-3 h-96 overflow-auto bg-white">
         {messages.map(m => {
           const body = sharedKey ? decryptMessage(sharedKey, m.ciphertext, m.nonce) : "...";

@@ -206,7 +206,7 @@ export const Component = () => {
         });
 
         const stars = new THREE.Points(geometry, material);
-        refs.scene.add(stars);
+        if (refs.scene) refs.scene.add(stars);
         refs.stars.push(stars);
       }
     };
@@ -265,7 +265,7 @@ export const Component = () => {
       const nebula = new THREE.Mesh(geometry, material);
       nebula.position.z = -1050;
       nebula.rotation.x = 0;
-      refs.scene.add(nebula);
+      if (refs.scene) refs.scene.add(nebula);
       refs.nebula = nebula;
     };
 
@@ -307,7 +307,7 @@ export const Component = () => {
         mountain.position.z = layer.distance;
         mountain.position.y = layer.distance
         mountain.userData = { baseZ: layer.distance, index } as any;
-        refs.scene.add(mountain);
+        if (refs.scene) refs.scene.add(mountain);
         refs.mountains.push(mountain);
       });
     };
@@ -351,7 +351,7 @@ export const Component = () => {
       });
 
       const atmosphere = new THREE.Mesh(geometry, material);
-      refs.scene.add(atmosphere);
+      if (refs.scene) refs.scene.add(atmosphere);
     };
 
     const animate = () => {
@@ -484,13 +484,15 @@ export const Component = () => {
     // Animate title with split text
     if (titleRef.current) {
       const titleChars = (titleRef.current as HTMLElement).querySelectorAll('.title-char');
-      tl.from(titleChars, {
+      if (titleChars.length > 0) {
+        tl.from(titleChars, {
         y: 200,
         opacity: 0,
         duration: 1.5,
         stagger: 0.05,
         ease: "power4.out"
       }, "-=0.5");
+      }
     }
 
     // Animation for other elements

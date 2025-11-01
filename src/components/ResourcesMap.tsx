@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
+import { useEffect, useRef, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Coords } from "@/lib/geo";
 import { formatDistance } from "@/lib/geo";
@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 
 // Custom pink marker for NGOs
 const ngoIcon = new L.Icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-pink.png",
+  iconUrl: "/map-markers/marker-icon-2x-pink.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -41,9 +41,50 @@ type ResourcesMapProps = {
   onMarkerClick?: (ngoId: string) => void;
 };
 
+function CaptureMap({ onMap }: { onMap: (map: L.Map) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    onMap(map);
+  }, [map, onMap]);
+  return null;
+}
+
+// Helper component to handle map instance
+function MapInstance({ setMapInstance }: { setMapInstance: (map: L.Map) => void }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (map) {
+      setMapInstance(map);
+    }
+    
+    return () => {
+      // Cleanup when component unmounts
+      if (map) {
+        setTimeout(() => {
+          try {
+            map.off();
+            map.remove();
+          } catch (e) {
+            // Ignore errors during cleanup
+          }
+        }, 0);
+      }
+    };
+  }, [map, setMapInstance]);
+
+  return null;
+}
+
 export default function ResourcesMap({ ngos, userLocation, selectedNgoId, onMarkerClick }: ResourcesMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const markerRefs = useRef<Map<string, L.Marker>>(new Map());
+  
+  
+  // Get top 5 NGOs based on user location
+  const top5Ngos = userLocation
+    ? [...ngos].sort((a, b) => (a.distanceKm || 0) - (b.distanceKm || 0)).slice(0, 5)
+    : ngos.slice(0, 5);
 
   // Center map on user location or default to India
   const center: [number, number] = userLocation
@@ -52,14 +93,7 @@ export default function ResourcesMap({ ngos, userLocation, selectedNgoId, onMark
 
   const zoom = userLocation ? 11 : 5;
 
-  useEffect(() => {
-    // Invalidate map size when component mounts to fix rendering issues
-    if (mapRef.current) {
-      setTimeout(() => {
-        mapRef.current?.invalidateSize();
-      }, 100);
-    }
-  }, []);
+  // Managed by React-Leaflet's MapContainer; avoid manual Leaflet init to prevent container reuse
 
   // Center and open popup for selected NGO
   useEffect(() => {
@@ -76,12 +110,13 @@ export default function ResourcesMap({ ngos, userLocation, selectedNgoId, onMark
   return (
     <div className="w-full h-[60vh] rounded-lg overflow-hidden border border-gray-200">
       <MapContainer
+        id="map"
         center={center}
         zoom={zoom}
         scrollWheelZoom={true}
         className="w-full h-full"
-        ref={mapRef}
       >
+        <CaptureMap onMap={(map) => { mapRef.current = map; }} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -107,8 +142,8 @@ export default function ResourcesMap({ ngos, userLocation, selectedNgoId, onMark
           </>
         )}
 
-        {/* NGO markers */}
-        {ngos.map((ngo) => (
+        {/* NGO markers - showing top 5 based on location */}
+        {top5Ngos.map((ngo) => (
           <Marker
             key={ngo.id}
             position={[ngo.lat, ngo.lng]}
