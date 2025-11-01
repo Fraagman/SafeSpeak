@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Reveal from "@/components/Reveal";
-import Marquee from "@/components/Marquee";
-import TiltCard from "@/components/TiltCard";
 import { Parallax } from "@/components/Parallax";
+import { EvervaultCard } from "@/components/ui/evervault-card";
+import { VelocityScroll } from "@/components/ui/scroll-based-velocity";
 
 export default function Page() {
   return (
@@ -57,57 +57,72 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Logos / Marquee */}
-      <section className="py-8 opacity-90">
-        <Marquee>
-          <span className="mx-8 text-white/70">Confidential</span>
-          <span className="mx-8 text-white/70">Encrypted</span>
-          <span className="mx-8 text-white/70">NGO‑Verified</span>
-          <span className="mx-8 text-white/70">Open‑source</span>
-        </Marquee>
-      </section>
+      {/* Scroll Velocity Text */}
+      <VelocityScroll
+        text="CONFIDENTIAL • ENCRYPTED • NGO-VERIFIED • OPEN-SOURCE"
+        default_velocity={5}
+        className="font-display text-center text-2xl font-bold tracking-wider text-white md:text-4xl md:leading-[3rem]"
+      />
 
       {/* Features */}
-      <section className="grid gap-6 py-16 md:grid-cols-3">
+      <section className="grid gap-8 py-16 md:grid-cols-3">
         <Reveal>
-          <TiltCard>
+          <div className="h-48">
+            <EvervaultCard text="Encrypt" />
+          </div>
+          <div className="text-center mt-4">
             <h3 className="text-xl font-semibold text-white">Client‑side encryption</h3>
             <p className="mt-2 text-white/70">Your evidence never leaves your device unencrypted.</p>
-          </TiltCard>
+          </div>
         </Reveal>
         <Reveal delay={.1}>
-          <TiltCard>
+          <div className="h-48">
+            <EvervaultCard text="Privacy" />
+          </div>
+          <div className="text-center mt-4">
             <h3 className="text-xl font-semibold text-white">Face blur + EXIF strip</h3>
             <p className="mt-2 text-white/70">Protect identities with on‑device redaction.</p>
-          </TiltCard>
+          </div>
         </Reveal>
         <Reveal delay={.2}>
-          <TiltCard>
+          <div className="h-48">
+            <EvervaultCard text="AI" />
+          </div>
+          <div className="text-center mt-4">
             <h3 className="text-xl font-semibold text-white">AI triage</h3>
             <p className="mt-2 text-white/70">Categorize and route to local help quickly.</p>
-          </TiltCard>
+          </div>
         </Reveal>
       </section>
 
       {/* Additional Features Section */}
-      <section className="grid gap-6 py-16 md:grid-cols-3">
+      <section className="grid gap-8 py-16 md:grid-cols-3">
         <Reveal delay={.3}>
-          <TiltCard>
+          <div className="h-48">
+            <EvervaultCard text="Anonymous" />
+          </div>
+          <div className="text-center mt-4">
             <h3 className="text-xl font-semibold text-white">Anonymous reporting</h3>
             <p className="mt-2 text-white/70">Share your story without revealing your identity.</p>
-          </TiltCard>
+          </div>
         </Reveal>
         <Reveal delay={.4}>
-          <TiltCard>
+          <div className="h-48">
+            <EvervaultCard text="Verified" />
+          </div>
+          <div className="text-center mt-4">
             <h3 className="text-xl font-semibold text-white">Verified resources</h3>
             <p className="mt-2 text-white/70">Connect with trusted local support organizations.</p>
-          </TiltCard>
+          </div>
         </Reveal>
         <Reveal delay={.5}>
-          <TiltCard>
+          <div className="h-48">
+            <EvervaultCard text="Stealth" />
+          </div>
+          <div className="text-center mt-4">
             <h3 className="text-xl font-semibold text-white">Stealth mode</h3>
             <p className="mt-2 text-white/70">Quick exit and stealth features for your safety.</p>
-          </TiltCard>
+          </div>
         </Reveal>
       </section>
 

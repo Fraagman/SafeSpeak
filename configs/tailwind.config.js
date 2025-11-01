@@ -1,7 +1,7 @@
 const config = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "./styles/**/*.{css}",
+    "./styles/**/*.css",
   ],
   theme: {
     extend: {

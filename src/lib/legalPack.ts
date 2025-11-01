@@ -4,6 +4,7 @@ export type LegalPackData = {
   tags: string[]; severity: number; urgency: "low"|"medium"|"high"|"immediate";
   sha256: string; anchorTxHash?: string; anchorExplorer?: string;
   location?: string; resources?: { name: string; contact?: string }[];
+  nearestResources?: { name: string; contact?: string; distanceKm?: number }[];
 };
 export async function generateLegalPackPDF(data: LegalPackData): Promise<Blob> {
   const pdf = await PDFDocument.create(); const page = pdf.addPage([612, 792]);
@@ -30,6 +31,14 @@ export async function generateLegalPackPDF(data: LegalPackData): Promise<Blob> {
   write("Evidence Hash (SHA-256):", data.sha256, false);
   if (data.anchorTxHash) { const link = `${data.anchorExplorer || "https://sepolia.etherscan.io/tx/"}${data.anchorTxHash}`; write("Blockchain Anchor:", link); }
   else write("Blockchain Anchor:", "Not available");
+  if (data.nearestResources?.length) {
+    const nearestText = data.nearestResources.slice(0, 3).map(r => {
+      const dist = r.distanceKm !== undefined ? ` — ${r.distanceKm.toFixed(1)} km` : '';
+      const contact = r.contact ? ` — ${r.contact}` : '';
+      return `• ${r.name}${contact}${dist}`;
+    }).join("\n");
+    write("Nearby support (based on your location):", nearestText);
+  }
   if (data.resources?.length){ write("Relevant Resources:", data.resources.map(r=>`• ${r.name}${r.contact?` (${r.contact})`:""}`).join("\n")); }
   const bytes = await pdf.save(); return new Blob([bytes], { type: "application/pdf" });
 }
