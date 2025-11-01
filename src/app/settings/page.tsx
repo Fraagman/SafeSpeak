@@ -1,7 +1,13 @@
 "use client";
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Orb from "@/components/Orb";
+=======
+import { auth } from "@/lib/firebase";
+import { sendSignInLinkToEmail } from "firebase/auth";
+import { useState } from "react";
+>>>>>>> 2c21052ab1a3130dc3d471ecf5c35536dc9b1c56
 
 const LANGUAGES = [
   { code: 'en', name: 'English' },
@@ -18,6 +24,7 @@ const LANGUAGES = [
 ];
 
 export default function Settings() {
+<<<<<<< HEAD
   const { t, i18n } = useTranslation('common');
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
   
@@ -81,122 +88,33 @@ export default function Settings() {
     setStealthMode(newValue);
     localStorage.setItem('stealthMode', JSON.stringify(newValue));
   };
+=======
+  const [email, setEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  async function upgrade() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) return alert("Enter a valid email address");
+    setSending(true);
+    try {
+      const actionCodeSettings = { url: window.location.origin, handleCodeInApp: true };
+      window.localStorage.setItem("emailForSignIn", email);
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      alert("Magic link sent. Check your inbox.");
+    } catch (e: any) { console.error(e); alert(e.message || "Error sending magic link"); }
+    finally { setSending(false); }
+  }
+>>>>>>> 2c21052ab1a3130dc3d471ecf5c35536dc9b1c56
   return (
-    <div className="relative min-h-screen">
-      {/* Orb Background */}
-      <div className="fixed inset-0 z-0 bg-black">
-        {/* Main Orb - Center/Large */}
-        <div style={{ width: '150%', height: '150vh', position: 'relative', left: '-25%', top: '-25%' }}>
-          <Orb
-            hoverIntensity={0.5}
-            rotateOnHover={true}
-            hue={200}
-            forceHoverState={false}
-          />
-        </div>
-        
-        {/* Second Orb - Bottom Right */}
-        <div style={{ 
-          width: '80%', 
-          height: '80vh', 
-          position: 'absolute', 
-          right: '-20%', 
-          bottom: '-20%',
-          pointerEvents: 'none'
-        }}>
-          <Orb
-            hoverIntensity={0}
-            rotateOnHover={false}
-            hue={280}
-            forceHoverState={true}
-          />
-        </div>
-        
-        {/* Third Orb - Top Left */}
-        <div style={{ 
-          width: '60%', 
-          height: '60vh', 
-          position: 'absolute', 
-          left: '-15%', 
-          top: '-15%',
-          pointerEvents: 'none'
-        }}>
-          <Orb
-            hoverIntensity={0}
-            rotateOnHover={false}
-            hue={120}
-            forceHoverState={true}
-          />
-        </div>
-        
-        {/* Fourth Orb - Top Right */}
-        <div style={{ 
-          width: '50%', 
-          height: '50vh', 
-          position: 'absolute', 
-          right: '-10%', 
-          top: '-10%',
-          pointerEvents: 'none'
-        }}>
-          <Orb
-            hoverIntensity={0}
-            rotateOnHover={false}
-            hue={0}
-            forceHoverState={true}
-          />
-        </div>
-        
-        {/* Fifth Orb - Bottom Left */}
-        <div style={{ 
-          width: '70%', 
-          height: '70vh', 
-          position: 'absolute', 
-          left: '-20%', 
-          bottom: '-20%',
-          pointerEvents: 'none'
-        }}>
-          <Orb
-            hoverIntensity={0}
-            rotateOnHover={false}
-            hue={60}
-            forceHoverState={true}
-          />
-        </div>
-        
-        {/* Sixth Orb - Center Right */}
-        <div style={{ 
-          width: '40%', 
-          height: '40vh', 
-          position: 'absolute', 
-          right: '5%', 
-          top: '30%',
-          pointerEvents: 'none'
-        }}>
-          <Orb
-            hoverIntensity={0}
-            rotateOnHover={false}
-            hue={300}
-            forceHoverState={true}
-          />
-        </div>
-        
-        {/* Seventh Orb - Center Left */}
-        <div style={{ 
-          width: '45%', 
-          height: '45vh', 
-          position: 'absolute', 
-          left: '5%', 
-          top: '25%',
-          pointerEvents: 'none'
-        }}>
-          <Orb
-            hoverIntensity={0}
-            rotateOnHover={false}
-            hue={180}
-            forceHoverState={true}
-          />
-        </div>
+    <main className="max-w-xl mx-auto p-6 space-y-4">
+      <h2 className="text-xl font-semibold">Settings</h2>
+      <div className="space-y-2">
+        <label className="block text-sm">Language</label>
+        <select className="border p-2 rounded" aria-label="Language">
+          <option>English</option>
+          <option>Hindi</option>
+        </select>
       </div>
+<<<<<<< HEAD
       
       {/* Main Content */}
       <main className="relative z-10 max-w-2xl mx-auto p-6 space-y-6">
@@ -312,5 +230,15 @@ export default function Settings() {
         </div>
       </main>
     </div>
+=======
+      <div className="space-y-2">
+        <label className="block text-sm">Upgrade account (magic link)</label>
+        <input value={email} onChange={e=>setEmail(e.target.value)} className="border p-2 rounded w-full" placeholder="Email" type="email" />
+        <button onClick={upgrade} disabled={sending} className="bg-slate-800 text-white px-3 py-2 rounded">
+          {sending ? "Sending..." : "Send Magic Link"}
+        </button>
+      </div>
+    </main>
+>>>>>>> 2c21052ab1a3130dc3d471ecf5c35536dc9b1c56
   );
 }

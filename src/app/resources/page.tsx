@@ -14,8 +14,11 @@ import {
   type Coords 
 } from "@/lib/geo";
 import { MasonryGrid, type MasonryCardData } from "@/components/ui/masonry-grid-with-scroll-animation";
+<<<<<<< HEAD
 import InfiniteMenu from "@/components/InfiniteMenu";
 import Particles from "@/components/Particles";
+=======
+>>>>>>> 2c21052ab1a3130dc3d471ecf5c35536dc9b1c56
 
 // Dynamic import for map component (client-only, no SSR)
 const ResourcesMap = dynamic(() => import("@/components/ResourcesMap"), {
@@ -406,6 +409,7 @@ export default function Resources() {
   }
 
   return (
+<<<<<<< HEAD
     <div className="relative min-h-screen">
       {/* Particles Background */}
       <div className="fixed inset-0 z-0 bg-black">
@@ -428,6 +432,47 @@ export default function Resources() {
         {/* Header */}
         <div className="mt-6 flex items-center justify-between rounded-full border border-white/10 px-4 py-2 backdrop-blur max-w-fit">
           <h1 className="font-semibold tracking-tight text-white">Find Help Near You</h1>
+=======
+    <main className="w-full max-w-screen-2xl mx-auto p-6 space-y-6">
+      {/* Location Banner */}
+      {banner.isVisible && (
+        <div 
+          className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3"
+          role="alert"
+          aria-live="polite"
+        >
+          <div className="flex-1">
+            <p className="text-sm text-blue-800">
+              Share approximate location to sort nearby help. We only use this to find NGOs near you.
+            </p>
+            {banner.error && (
+              <p className="mt-1 text-sm text-red-600">{banner.error}</p>
+            )}
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <button
+              onClick={handleLocationRequest}
+              disabled={banner.isLoading}
+              className="px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+              aria-label="Use my current location"
+            >
+              {banner.isLoading ? 'Detecting...' : 'Use my location'}
+            </button>
+            <button
+              onClick={() => setModal({ isOpen: true, cityInput: '' })}
+              className="px-3 py-1.5 text-sm font-medium bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              Enter city
+            </button>
+            <button
+              onClick={snoozeBanner}
+              className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800"
+              aria-label="Dismiss for 24 hours"
+            >
+              Not now
+            </button>
+          </div>
+>>>>>>> 2c21052ab1a3130dc3d471ecf5c35536dc9b1c56
         </div>
 
         {/* Location Banner */}
@@ -767,6 +812,9 @@ export default function Resources() {
         />
       )}
     </main>
+<<<<<<< HEAD
     </div>
+=======
+>>>>>>> 2c21052ab1a3130dc3d471ecf5c35536dc9b1c56
   );
 }

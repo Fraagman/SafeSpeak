@@ -7,7 +7,7 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.gstatic.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://unpkg.com https://raw.githubusercontent.com https://i.im.ge",
+  "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://unpkg.com https://raw.githubusercontent.com",
   "connect-src 'self' https://*.supabase.co wss://firestore.googleapis.com https://firestore.googleapis.com https://api.deepseek.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems",
   "font-src 'self' https://fonts.gstatic.com",
   "frame-ancestors 'self'",
@@ -66,17 +66,18 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '*.tile.openstreetmap.org',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.im.ge',
       }
     ]
   },
-  // Disable experimental features to avoid React Server Components issues
-  experimental: {},
-  // Turbopack configuration to silence the warning
-  turbopack: {},
+  // Turbopack configuration
+  experimental: {
+    // Disable Turbopack and use webpack
+    turbo: false,
+    // Server Actions configuration
+    serverActions: {
+      bodySizeLimit: "2mb"
+    }
+  },
   // External packages for server components
   serverExternalPackages: ['@tensorflow/tfjs', '@tensorflow-models/blazeface'],
   // Security headers
@@ -87,6 +88,10 @@ const nextConfig = {
         headers: securityHeaders,
       },
     ];
+  },
+  // Disable ESLint during builds (use separate linting in CI/CD)
+  eslint: {
+    ignoreDuringBuilds: true,
   },
   // Disable TypeScript type checking during build (use separate type checking in CI/CD)
   typescript: {
