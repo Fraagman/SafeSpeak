@@ -41,7 +41,6 @@ const securityHeaders = [
 const baseConfig = {
   reactStrictMode: true,
   experimental: {
-    typedRoutes: true,
     serverActions: {
       bodySizeLimit: "2mb",
     },
