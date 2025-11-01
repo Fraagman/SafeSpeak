@@ -47,7 +47,7 @@ export const EvervaultCard = ({
           randomString={randomString}
         />
         <div className="relative z-10 flex items-center justify-center">
-          <div className="relative h-32 w-32 rounded-full flex items-center justify-center text-white font-bold text-3xl">
+          <div className="relative h-32 w-32 rounded-full flex items-center justify-center text-black font-bold text-3xl">
             <span className="text-white z-20">{text}</span>
           </div>
         </div>

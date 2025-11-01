@@ -1,0 +1,7 @@
+module.exports = [
+"[project]/OneDrive/Desktop/web/SafeSpeak/.next-internal/server/app/chat/page/actions.js [app-rsc] (server actions loader, ecmascript)", ((__turbopack_context__, module, exports) => {
+
+}),
+];
+
+//# sourceMappingURL=13466_Desktop_web_SafeSpeak__next-internal_server_app_chat_page_actions_d0cafd4c.js.map

@@ -13,6 +13,7 @@ import {
   formatDistance,
   type Coords 
 } from "@/lib/geo";
+import { MasonryGrid, type MasonryCardData } from "@/components/ui/masonry-grid-with-scroll-animation";
 
 // Dynamic import for map component (client-only, no SSR)
 const ResourcesMap = dynamic(() => import("@/components/ResourcesMap"), {
@@ -71,13 +72,11 @@ export default function Resources() {
   const [modal, setModal] = useState<ModalState>({ isOpen: false, cityInput: '' });
   const [permissionState, setPermissionState] = useState<PermissionState | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [geocoding, setGeocoding] = useState(false);
   const [geocodedCity, setGeocodedCity] = useState<{ name: string; coords: Coords } | null>(null);
-  const [selectedNgoId, setSelectedNgoId] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
   const [userCity, setUserCity] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
@@ -367,20 +366,6 @@ export default function Resources() {
     setRadius(Infinity);
   };
 
-  // Handle marker click - switch to list view and scroll to card
-  const handleMarkerClick = (ngoId: string) => {
-    setViewMode('list');
-    setTimeout(() => {
-      const element = cardRefs.current.get(ngoId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.classList.add('ring-2', 'ring-blue-500');
-        setTimeout(() => {
-          element.classList.remove('ring-2', 'ring-blue-500');
-        }, 2000);
-      }
-    }, 100);
-  };
 
   // Filter NGOs by radius
   const filteredItems = items.filter(ngo => {
@@ -391,12 +376,19 @@ export default function Resources() {
   // Pagination
   const visibleItems = Number.isFinite(perPage) ? filteredItems.slice(0, perPage) : filteredItems;
 
-  const cities = ["Delhi", "Mumbai", "Chennai", "Hyderabad"];
+  const masonryItems: MasonryCardData[] = visibleItems.map(ngo => ({
+    id: ngo.id,
+    src: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=500',
+    alt: ngo.name,
+    content: ngo.services.join(', '),
+    linkHref: '#',
+    linkText: 'Learn more'
+  }));
 
   // Only render client-side to avoid hydration issues
   if (!mounted) {
     return (
-      <main className="max-w-2xl mx-auto p-6">
+      <main className="w-full max-w-screen-2xl mx-auto p-6">
         <div className="h-8" /> {/* Placeholder for the banner */}
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 rounded w-1/2"></div>
@@ -412,7 +404,7 @@ export default function Resources() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto p-6 space-y-6">
+    <main className="w-full max-w-screen-2xl mx-auto p-6 space-y-6">
       {/* Location Banner */}
       {banner.isVisible && (
         <div 
@@ -631,236 +623,105 @@ export default function Resources() {
           </div>
 
           {/* View Toggle and Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800">
-                {userLoc ? 'Nearby NGOs' : 'All NGOs'}
-                {userLoc && Number.isFinite(radius) && ` (within ${radius} km)`}
-              </h2>
-            </div>
-            
-            {/* View Toggle */}
-            <div className="inline-flex rounded-md shadow-sm" role="group">
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
-                  viewMode === 'list'
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                }`}
-                aria-label="List view"
-              >
-                <svg className="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                </svg>
-                List
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('map')}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg border-t border-r border-b ${
-                  viewMode === 'map'
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                }`}
-                aria-label="Map view"
-              >
-                <svg className="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clipRule="evenodd" />
-                </svg>
-                Map
-              </button>
-            </div>
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {filteredItems.length} {filteredItems.length === 1 ? 'Resource' : 'Resources'} Found
+            </h2>
+            {userLoc && (
+              <p className="text-sm text-gray-600 mt-1">
+                Showing results near your location
+              </p>
+            )}
           </div>
 
-          {/* Map View */}
-          {viewMode === 'map' ? (
-            <ResourcesMap
-              ngos={filteredItems
-                .filter(ngo => ngo.lat !== null && ngo.lng !== null)
-                .map(ngo => ({
-                  id: ngo.id,
-                  name: ngo.name,
-                  lat: ngo.lat!,
-                  lng: ngo.lng!,
-                  verified: ngo.verified,
-                  contact: ngo.contact,
-                  distanceKm: ngo.distanceKm,
-                }))}
-              userLocation={userLoc}
-              selectedNgoId={selectedNgoId}
-              onMarkerClick={handleMarkerClick}
-            />
-          ) : (
-            /* List View */
-            <>
-            <div className="space-y-3">
-              {visibleItems.map(ngo => (
-                <div 
-                  key={ngo.id}
-                  ref={(el) => {
-                    if (el) cardRefs.current.set(ngo.id, el);
-                    else cardRefs.current.delete(ngo.id);
-                  }}
-                  onMouseEnter={() => setSelectedNgoId(ngo.id)}
-                  onMouseLeave={() => setSelectedNgoId(null)}
-                  onFocus={() => setSelectedNgoId(ngo.id)}
-                  onBlur={() => setSelectedNgoId(null)}
-                  className="bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200"
-                >
-                  <div className="p-4">
-                    <div className="flex justify-between items-start">
-                      <h3 className="text-lg font-medium text-gray-900 mb-1">{ngo.name}</h3>
-                      <div className="flex items-center space-x-2">
-                        {ngo.verified && (
-                          <span 
-                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" 
-                            title="Verified NGO"
-                          >
-                            ✓ Verified
-                          </span>
-                        )}
+          {/* Top 5 Nearest NGOs with Pin Markers */}
+          {userLoc && filteredItems.length > 0 && (
+            <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                </svg>
+                Top 5 Nearest Resources
+              </h3>
+              <div className="space-y-3">
+                {filteredItems.slice(0, 5).map((ngo, index) => (
+                  <div key={ngo.id} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                          {index + 1}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-semibold text-gray-900 truncate">{ngo.name}</h4>
+                          {ngo.verified && (
+                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800 flex-shrink-0">
+                              ✓ Verified
+                            </span>
+                          )}
+                        </div>
                         {ngo.distanceKm !== undefined && (
-                          <span 
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                              ngo.approx ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
-                            }`}
-                            title={ngo.approx ? 'Approximate distance' : 'Distance'}
-                          >
-                            {ngo.approx ? '≈ ' : ''}{ngo.distanceKm.toFixed(1)} km
-                            {ngo.approx && (
-                              <span 
-                                className="ml-1 cursor-help" 
-                                title="Approximate location based on city/region"
-                              >
-                                ⓘ
-                              </span>
-                            )}
-                          </span>
+                          <p className="text-sm text-gray-600 mb-2">
+                            📍 {formatDistance(ngo.distanceKm)} away
+                          </p>
                         )}
-                      </div>
-                    </div>
-                    
-                    {ngo.region && (
-                      <p className="text-sm text-gray-500 mb-2">
-                        {[ngo.region, ngo.state].filter(Boolean).join(', ')}
-                      </p>
-                    )}
-                    
-                    {ngo.services && ngo.services.length > 0 && (
-                      <div className="mt-2">
-                        <h4 className="text-sm font-medium text-gray-700">Services:</h4>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {ngo.services.slice(0, 3).map((service) => (
-                            <span
-                              key={service}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                        <div className="flex flex-wrap gap-2">
+                          {ngo.contact && (
+                            <a
+                              href={`tel:${ngo.contact}`}
+                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors"
                             >
-                              {service}
-                            </span>
-                          ))}
-                          {ngo.services.length > 3 && (
-                            <span className="text-xs text-gray-500 self-center">
-                              +{ngo.services.length - 3} more
-                            </span>
+                              📞 Call Now
+                            </a>
+                          )}
+                          {ngo.lat && ngo.lng && (
+                            <a
+                              href={`https://www.google.com/maps/search/?api=1&query=${ngo.lat},${ngo.lng}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                              🗺️ Directions
+                            </a>
                           )}
                         </div>
                       </div>
-                    )}
-                    
-                    {ngo.languages && ngo.languages.length > 0 && (
-                      <div className="mt-2">
-                        <h4 className="text-sm font-medium text-gray-700">Languages:</h4>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {ngo.languages.slice(0, 3).map((lang) => (
-                            <span
-                              key={lang}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800"
-                            >
-                              {lang}
-                            </span>
-                          ))}
-                          {ngo.languages.length > 3 && (
-                            <span className="text-xs text-gray-500 self-center">
-                              +{ngo.languages.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="mt-3 flex justify-between items-center">
-                      {ngo.contact && (
-                        <a
-                          href={`tel:${ngo.contact}`}
-                          className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline"
-                        >
-                          <svg
-                            className="h-4 w-4 mr-1 flex-shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                            />
-                          </svg>
-                          {ngo.contact}
-                        </a>
-                      )}
-                      
-                      {ngo.lat && ngo.lng && (
-                        <a
-                          href={`https://www.google.com/maps/search/?api=1&query=${ngo.lat},${ngo.lng}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
-                        >
-                          <svg
-                            className="h-4 w-4 mr-1"
-                            fill="none"
-                            viewBox="0 0 20 20"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                          </svg>
-                          View on Map
-                        </a>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          
-          {/* Load More Button */}
-          {Number.isFinite(perPage) && visibleItems.length < filteredItems.length && (
-            <div className="text-center pt-4">
-              <button
-                onClick={() => setPerPage(perPage + 25)}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
-              >
-                Load More ({filteredItems.length - visibleItems.length} remaining)
-              </button>
+                ))}
+              </div>
             </div>
           )}
-          </>
+
+          {/* Interactive Map */}
+          {filteredItems.some(ngo => ngo.lat !== null && ngo.lng !== null) && (
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clipRule="evenodd" />
+                </svg>
+                Interactive Map View
+              </h3>
+              <ResourcesMap
+                ngos={filteredItems
+                  .filter(ngo => ngo.lat !== null && ngo.lng !== null)
+                  .map(ngo => ({
+                    id: ngo.id,
+                    name: ngo.name,
+                    lat: ngo.lat!,
+                    lng: ngo.lng!,
+                    verified: ngo.verified,
+                    contact: ngo.contact,
+                    distanceKm: ngo.distanceKm,
+                  }))}
+                userLocation={userLoc}
+              />
+            </div>
           )}
+
+          {/* All Resources List */}
+          <MasonryGrid items={masonryItems} />
         </div>
       )}
 
