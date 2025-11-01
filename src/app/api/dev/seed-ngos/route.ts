@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-
+import { NextResponse, NextRequest } from "next/server";
 import { getAdminDb } from "@/lib/admin";
 
 type NgoDoc = {
@@ -11,6 +10,8 @@ type NgoDoc = {
     verified: boolean;
     contact: string;
     region: string;
+    lat?: number;
+    lng?: number;
   };
 };
 
@@ -27,16 +28,21 @@ export const POST = methodNotAllowed;
 export const PUT = methodNotAllowed;
 export const DELETE = methodNotAllowed;
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  // Production protection: disable dev routes unless valid token provided
+  const token = request.nextUrl.searchParams.get("token");
+  const validToken = process.env.DEV_SEED_TOKEN;
+  
+  if (process.env.NODE_ENV !== "development" && token !== validToken) {
+    return NextResponse.json({ error: "gone" }, { status: 410 });
+  }
+  
+  // Additional check: require token even in dev
+  if (!token || token !== validToken) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const token = searchParams.get("token");
-    const expected = process.env.DEV_SEED_TOKEN;
-
-    if (!expected || token !== expected) {
-      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-    }
-
     const ngos: NgoDoc[] = [
       {
         id: "ngo_safe_legal",
@@ -47,6 +53,8 @@ export async function GET(request: Request) {
           verified: true,
           contact: "+91 90000 11111",
           region: "Delhi",
+          lat: 28.6139,
+          lng: 77.2090
         },
       },
       {
@@ -58,6 +66,8 @@ export async function GET(request: Request) {
           verified: true,
           contact: "+91 90000 22222",
           region: "Mumbai",
+          lat: 19.0760,
+          lng: 72.8777
         },
       },
       {
@@ -69,6 +79,8 @@ export async function GET(request: Request) {
           verified: false,
           contact: "1800-000-000",
           region: "Chennai",
+          lat: 13.0827,
+          lng: 80.2707
         },
       },
       {
@@ -80,6 +92,8 @@ export async function GET(request: Request) {
           verified: true,
           contact: "+91 90000 33333",
           region: "Hyderabad",
+          lat: 17.3850,
+          lng: 78.4867
         },
       },
     ];
@@ -89,7 +103,25 @@ export async function GET(request: Request) {
 
     ngos.forEach(({ id, data }) => {
       const docRef = adminDb.collection("ngos").doc(id);
-      batch.set(docRef, data, { merge: true });
+      // Only update lat/lng if they don't already exist
+      const updateData = { ...data };
+      batch.set(
+        docRef, 
+        updateData, 
+        { 
+          merge: true,
+          mergeFields: [
+            'name',
+            'services',
+            'languages',
+            'verified',
+            'contact',
+            'region',
+            ...(data.lat !== undefined ? ['lat'] : []),
+            ...(data.lng !== undefined ? ['lng'] : [])
+          ]
+        }
+      );
     });
 
     await batch.commit();

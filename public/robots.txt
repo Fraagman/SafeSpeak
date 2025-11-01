@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /report/
+Disallow: /chat/
+Disallow: /api/dev/
+Allow: /
+Allow: /resources
+Allow: /settings
+
+Sitemap: https://safespeak.vercel.app/sitemap.xml

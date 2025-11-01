@@ -1,6 +1,23 @@
 import { NextResponse } from "next/server";
-
 import { getAdminDb } from "@/lib/admin";
+
+// Duplicate of CITY_MAP from geo.ts for server-side use
+const CITY_MAP: Record<string, { lat: number; lng: number }> = {
+  delhi: { lat: 28.6139, lng: 77.2090 },
+  mumbai: { lat: 19.0760, lng: 72.8777 },
+  chennai: { lat: 13.0827, lng: 80.2707 },
+  hyderabad: { lat: 17.3850, lng: 78.4867 },
+};
+
+function getCityCoords(region?: string): { lat: number | null; lng: number | null } {
+  if (!region) return { lat: null, lng: null };
+  
+  // Normalize region name (lowercase, no spaces)
+  const normalized = region.toLowerCase().replace(/\s+/g, '');
+  const coords = CITY_MAP[normalized];
+  
+  return coords ? { lat: coords.lat, lng: coords.lng } : { lat: null, lng: null };
+}
 
 type NgoRecord = {
   name?: unknown;
@@ -9,6 +26,8 @@ type NgoRecord = {
   verified?: unknown;
   contact?: unknown;
   region?: unknown;
+  lat?: unknown;
+  lng?: unknown;
 };
 
 function methodNotAllowed() {
@@ -55,6 +74,24 @@ export async function GET() {
 
     const ngos = snapshot.docs.map((doc) => {
       const data = doc.data() as NgoRecord | undefined;
+      const region = normalizeOptionalString(data?.region);
+      
+      // Get coordinates, with fallback to city coordinates if available
+      let lat: number | null = null;
+      let lng: number | null = null;
+      
+      // Check if lat/lng exist and are valid numbers
+      if (typeof data?.lat === 'number' && !isNaN(data.lat) && 
+          typeof data?.lng === 'number' && !isNaN(data.lng)) {
+        lat = data.lat;
+        lng = data.lng;
+      } 
+      // Fallback to city coordinates if available
+      else if (region) {
+        const cityCoords = getCityCoords(region);
+        lat = cityCoords.lat;
+        lng = cityCoords.lng;
+      }
 
       return {
         id: doc.id,
@@ -63,7 +100,9 @@ export async function GET() {
         languages: normalizeStrings(data?.languages),
         verified: normalizeBoolean(data?.verified),
         contact: normalizeOptionalString(data?.contact),
-        region: normalizeOptionalString(data?.region),
+        region,
+        lat,
+        lng,
       };
     });
 
