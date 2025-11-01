@@ -1,0 +1,257 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { MasonryGrid, type MasonryCardData } from "@/components/ui/masonry-grid-with-scroll-animation";
+
+// Sample NGO data - in a real app, this would come from your API
+const SAMPLE_NGOS: MasonryCardData[] = [
+  {
+    id: "1",
+    src: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=500",
+    alt: "Education for all",
+    content: "Providing quality education to underprivileged children in rural areas.",
+    linkHref: "#",
+    linkText: "Learn more"
+  },
+  {
+    id: "2",
+    src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500",
+    alt: "Women's empowerment",
+    content: "Empowering women through skill development and education programs.",
+    linkHref: "#",
+    linkText: "Get involved"
+  },
+  {
+    id: "3",
+    src: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500",
+    alt: "Healthcare initiatives",
+    content: "Providing healthcare services to remote communities.",
+    linkHref: "#",
+    linkText: "Support us"
+  },
+  {
+    id: "4",
+    src: "https://images.unsplash.com/photo-1503676260728-1c00da094a0a?w=500",
+    alt: "Environmental conservation",
+    content: "Working towards a greener future through sustainable practices and education.",
+    linkHref: "#",
+    linkText: "Join our cause"
+  },
+  {
+    id: "5",
+    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=500",
+    alt: "Disaster relief",
+    content: "Providing immediate assistance and long-term recovery support in disaster-affected areas.",
+    linkHref: "#",
+    linkText: "Donate now"
+  },
+  {
+    id: "6",
+    src: "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=500",
+    alt: "Animal welfare",
+    content: "Protecting and caring for animals in need through rescue and rehabilitation.",
+    linkHref: "#",
+    linkText: "Adopt a pet"
+  },
+  // Add more sample NGOs as needed
+];
+
+type Ngo = {
+  id: string;
+  name: string;
+  services?: string[];
+  languages?: string[];
+  region?: string;
+  lat?: number;
+  lng?: number;
+  verified?: boolean;
+};
+
+export default function Resources() {
+  const [showMap, setShowMap] = useState(false);
+  const [ngos, setNgos] = useState<MasonryCardData[]>(SAMPLE_NGOS);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedNgo, setSelectedNgo] = useState<MasonryCardData | null>(null);
+
+  // In a real app, you would fetch this data from your API
+  useEffect(() => {
+    // Simulate API call
+    const fetchNgos = async () => {
+      setIsLoading(true);
+      try {
+        // Replace with actual API call
+        // const response = await fetch('/api/ngos');
+        // const data = await response.json();
+        // setNgos(data);
+        
+        // For now, using sample data
+        setNgos(SAMPLE_NGOS);
+      } catch (error) {
+        console.error('Error fetching NGOs:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNgos();
+  }, []);
+
+  // Filter NGOs based on search query
+  const filteredNgos = ngos.filter(ngo => 
+    ngo.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ngo.alt.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Help</h1>
+          <p className="text-gray-600">
+            Connect with verified NGOs and support services in your area
+          </p>
+        </div>
+
+        {/* Search and Filter Section */}
+        <div className="mb-8">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg
+                className="h-5 w-5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Search for NGOs, services, or locations..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* View Toggle */}
+        <div className="flex justify-end mb-6">
+          <div className="inline-flex rounded-md shadow-sm" role="group">
+            <button
+              type="button"
+              onClick={() => setShowMap(false)}
+              className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
+                !showMap
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Grid View
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowMap(true)}
+              className={`px-4 py-2 text-sm font-medium rounded-r-lg border-t border-r border-b ${
+                showMap
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Map View
+            </button>
+          </div>
+        </div>
+
+        {/* Masonry Grid */}
+        <div className="mb-12">
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : showMap ? (
+            <div className="bg-gray-100 rounded-lg p-8 text-center">
+              <p className="text-gray-600">Map view will be implemented here</p>
+              <button 
+                onClick={() => setShowMap(false)}
+                className="mt-4 text-blue-600 hover:underline"
+              >
+                Back to grid view
+              </button>
+            </div>
+          ) : filteredNgos.length > 0 ? (
+            <MasonryGrid items={filteredNgos} />
+          ) : (
+            <div className="text-center py-12">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">No NGOs found</h3>
+              <p className="mt-1 text-sm text-gray-500">
+                We couldn't find any NGOs matching your search criteria.
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Selected NGO Modal */}
+      {selectedNgo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start">
+                <h2 className="text-2xl font-bold text-gray-900">{selectedNgo.alt}</h2>
+                <button
+                  onClick={() => setSelectedNgo(null)}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <span className="sr-only">Close</span>
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="mt-4">
+                <img
+                  src={selectedNgo.src}
+                  alt={selectedNgo.alt}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <p className="mt-4 text-gray-700">{selectedNgo.content}</p>
+                
+                <div className="mt-6">
+                  <a
+                    href={selectedNgo.linkHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    {selectedNgo.linkText}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
