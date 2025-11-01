@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Navigation() {
+  const { t } = useTranslation('common');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("0.0");
 
@@ -33,12 +35,12 @@ export default function Navigation() {
   };
 
   const navItems = [
-    { id: "0.0", label: "Home", href: "/" },
-    { id: "1.0", label: "Features", href: "#features" },
-    { id: "2.0", label: "Resources", href: "/resources" },
-    { id: "3.0", label: "Stories", href: "#stories" },
-    { id: "4.0", label: "Support", href: "#support" },
-    { id: "5.0", label: "About", href: "/about" },
+    { id: "0.0", label: t('home'), href: "/" },
+    { id: "1.0", label: t('features'), href: "#features" },
+    { id: "2.0", label: t('resources'), href: "/resources" },
+    { id: "3.0", label: t('stories'), href: "#stories" },
+    { id: "4.0", label: t('support'), href: "#support" },
+    { id: "5.0", label: t('about'), href: "/about" },
   ];
 
   return (
@@ -61,16 +63,16 @@ export default function Navigation() {
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                {item.id} {item.label}
+                {item.label}
               </button>
             ))}
           </div>
           <div className="hidden md:flex lg:hidden items-center gap-4">
             <Link href="/resources" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium">
-              Resources
+              {t('resources')}
             </Link>
             <Link href="/settings" className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium">
-              Settings
+              {t('settings')}
             </Link>
           </div>
           <button
@@ -97,7 +99,7 @@ export default function Navigation() {
                   : scrollToSection(item.id)}
                 className="block w-full text-left px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors text-sm font-medium"
               >
-                {item.id} {item.label}
+                {item.label}
               </button>
             ))}
             <Link 
@@ -105,7 +107,7 @@ export default function Navigation() {
               className="block px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors text-sm font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Settings
+              {t('settings')}
             </Link>
           </div>
         )}

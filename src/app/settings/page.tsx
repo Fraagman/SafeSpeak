@@ -1,12 +1,25 @@
 "use client";
-import { auth } from "@/lib/firebase";
-import { sendSignInLinkToEmail } from "firebase/auth";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Orb from "@/components/Orb";
 
+const LANGUAGES = [
+  { code: 'en', name: 'English' },
+  { code: 'hi', name: 'हिन्दी (Hindi)' },
+  { code: 'mr', name: 'मराठी (Marathi)' },
+  { code: 'ta', name: 'தமிழ் (Tamil)' },
+  { code: 'te', name: 'తెలుగు (Telugu)' },
+  { code: 'bn', name: 'বাংলা (Bengali)' },
+  { code: 'gu', name: 'ગુજરાતી (Gujarati)' },
+  { code: 'kn', name: 'ಕನ್ನಡ (Kannada)' },
+  { code: 'ml', name: 'മലയാളം (Malayalam)' },
+  { code: 'pa', name: 'ਪੰਜਾਬੀ (Punjabi)' },
+  { code: 'ur', name: 'اردو (Urdu)' },
+];
+
 export default function Settings() {
-  const [email, setEmail] = useState("");
-  const [sending, setSending] = useState(false);
+  const { t, i18n } = useTranslation('common');
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
   
   // Toggle states
   const [darkMode, setDarkMode] = useState(true);
@@ -20,12 +33,23 @@ export default function Settings() {
     const savedNotifications = localStorage.getItem('notifications');
     const savedLocation = localStorage.getItem('locationServices');
     const savedStealthMode = localStorage.getItem('stealthMode');
+    const savedLanguage = localStorage.getItem('i18nextLng') || 'en';
     
     if (savedDarkMode !== null) setDarkMode(JSON.parse(savedDarkMode));
     if (savedNotifications !== null) setNotifications(JSON.parse(savedNotifications));
     if (savedLocation !== null) setLocationServices(JSON.parse(savedLocation));
     if (savedStealthMode !== null) setStealthMode(JSON.parse(savedStealthMode));
-  }, []);
+    if (savedLanguage) {
+      setCurrentLanguage(savedLanguage);
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n]);
+  
+  const handleLanguageChange = (newLanguage: string) => {
+    setCurrentLanguage(newLanguage);
+    i18n.changeLanguage(newLanguage);
+    localStorage.setItem('i18nextLng', newLanguage);
+  };
   
   // Stealth mode effect
   useEffect(() => {
@@ -57,18 +81,6 @@ export default function Settings() {
     setStealthMode(newValue);
     localStorage.setItem('stealthMode', JSON.stringify(newValue));
   };
-  async function upgrade() {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) return alert("Enter a valid email address");
-    setSending(true);
-    try {
-      const actionCodeSettings = { url: window.location.origin, handleCodeInApp: true };
-      window.localStorage.setItem("emailForSignIn", email);
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      alert("Magic link sent. Check your inbox.");
-    } catch (e: any) { console.error(e); alert(e.message || "Error sending magic link"); }
-    finally { setSending(false); }
-  }
   return (
     <div className="relative min-h-screen">
       {/* Orb Background */}
@@ -189,59 +201,38 @@ export default function Settings() {
       {/* Main Content */}
       <main className="relative z-10 max-w-2xl mx-auto p-6 space-y-6">
         <div className="mt-6 flex items-center justify-between rounded-full border border-white/10 px-4 py-2 backdrop-blur">
-          <h2 className="font-semibold tracking-tight text-white">Settings</h2>
+          <h2 className="font-semibold tracking-tight text-white">{t('settings')}</h2>
         </div>
         
         <div className="space-y-6">
           {/* Language Settings */}
           <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6 space-y-4">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-white/90">Language</label>
+              <label className="block text-sm font-medium text-white/90">{t('language')}</label>
               <select 
+                value={currentLanguage}
+                onChange={(e) => handleLanguageChange(e.target.value)}
                 className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur p-3 text-white focus:ring-2 focus:ring-white/20 focus:border-transparent focus:outline-none" 
                 aria-label="Language"
               >
-                <option value="en" className="bg-gray-900">English</option>
-                <option value="hi" className="bg-gray-900">Hindi</option>
+                {LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code} className="bg-gray-900">
+                    {lang.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
           
-          {/* Account Upgrade */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6 space-y-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-white/90">Upgrade account (magic link)</label>
-              <input 
-                value={email} 
-                onChange={e=>setEmail(e.target.value)} 
-                className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur p-3 text-white placeholder-white/50 focus:ring-2 focus:ring-white/20 focus:border-transparent focus:outline-none" 
-                placeholder="Enter your email address" 
-                type="email" 
-                disabled={sending}
-              />
-            </div>
-            <button 
-              onClick={upgrade} 
-              disabled={sending} 
-              className={`rounded-full px-6 py-3 font-medium transition-colors ${
-                sending 
-                  ? 'bg-white/10 border border-white/10 text-white/50 cursor-not-allowed' 
-                  : 'bg-white text-black hover:bg-white/90'
-              }`}
-            >
-              {sending ? "Sending..." : "Send Magic Link"}
-            </button>
-          </div>
-          
           {/* Additional Settings */}
           <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6 space-y-4">
-            <h3 className="text-lg font-semibold text-white">Preferences</h3>
+            <h3 className="text-lg font-semibold text-white">{t('preferences')}</h3>
             
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-white/90">Remember Me</label>
-                  <p className="text-xs text-white/60">Keep me logged in for faster access</p>
+                  <label className="text-sm font-medium text-white/90">{t('remember_me')}</label>
+                  <p className="text-xs text-white/60">{t('remember_me_desc')}</p>
                 </div>
                 <button 
                   onClick={toggleDarkMode}
@@ -257,8 +248,8 @@ export default function Settings() {
               
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-white/90">Stealth Mode</label>
-                  <p className="text-xs text-white/60">Hide app appearance for privacy</p>
+                  <label className="text-sm font-medium text-white/90">{t('stealth_mode_setting')}</label>
+                  <p className="text-xs text-white/60">{t('stealth_mode_desc')}</p>
                 </div>
                 <button 
                   onClick={toggleStealthMode}
@@ -274,8 +265,8 @@ export default function Settings() {
               
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-white/90">Notifications</label>
-                  <p className="text-xs text-white/60">Receive email notifications for updates</p>
+                  <label className="text-sm font-medium text-white/90">{t('notifications')}</label>
+                  <p className="text-xs text-white/60">{t('notifications_desc')}</p>
                 </div>
                 <button 
                   onClick={toggleNotifications}
@@ -291,8 +282,8 @@ export default function Settings() {
               
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-white/90">Location Services</label>
-                  <p className="text-xs text-white/60">Allow access to your location for nearby resources</p>
+                  <label className="text-sm font-medium text-white/90">{t('location_services')}</label>
+                  <p className="text-xs text-white/60">{t('location_services_desc')}</p>
                 </div>
                 <button 
                   onClick={toggleLocationServices}
@@ -310,11 +301,11 @@ export default function Settings() {
           
           {/* Danger Zone */}
           <div className="rounded-2xl border border-red-500/20 bg-red-500/5 backdrop-blur p-6 space-y-4">
-            <h3 className="text-lg font-semibold text-red-400">Danger Zone</h3>
+            <h3 className="text-lg font-semibold text-red-400">{t('danger_zone')}</h3>
             <div className="space-y-2">
-              <p className="text-sm text-white/70">These actions cannot be undone.</p>
+              <p className="text-sm text-white/70">{t('danger_zone_desc')}</p>
               <button className="rounded-full border border-red-500/20 bg-red-500/10 backdrop-blur px-4 py-2 font-medium text-red-400 hover:bg-red-500/20 transition-colors">
-                Delete Account
+                {t('delete_account')}
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Reveal from "@/components/Reveal";
 import { Parallax } from "@/components/Parallax";
 import { EvervaultCard } from "@/components/ui/evervault-card";
@@ -9,6 +10,7 @@ import { DemoOne } from "@/components/ui/demo";
 import { FeaturesSectionWithCardGradient } from "@/components/blocks/feature-section-with-card-gradient";
 
 export default function Page() {
+  const { t } = useTranslation('common');
   return (
     <div className="mx-auto max-w-6xl px-4 relative">
       {/* Horizon Three.js background */}
@@ -24,7 +26,7 @@ export default function Page() {
             transition={{ duration: .7, ease: "easeOut" }}
             className="max-w-4xl text-5xl md:text-7xl font-semibold leading-[1.05] tracking-tight"
           >
-            <span className="grad-text">Report safely.</span> Get support fast. Stay in control.
+            <span className="grad-text">{t('report_safely')}</span> {t('get_support_fast')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -32,7 +34,7 @@ export default function Page() {
             transition={{ delay: .15, duration: .7 }}
             className="mt-6 max-w-2xl text-lg text-white/80"
           >
-            Anonymous reporting with client‑side encryption, AI triage, and verified resources — built with privacy first.
+            {t('anonymous_reporting_desc')}
           </motion.p>
 
           <motion.div
@@ -42,11 +44,11 @@ export default function Page() {
             className="mt-8 flex flex-wrap gap-3"
           >
             <Link href="/report/new" className="group relative inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-black hover:bg-white/90 transition">
-              Create report
+              {t('create_report')}
               <span className="transition-transform group-hover:translate-x-1">→</span>
             </Link>
             <Link href="/resources" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-white/90 hover:bg-white/10 transition">
-              Browse resources
+              {t('browse_resources')}
             </Link>
           </motion.div>
         </div>
@@ -64,7 +66,7 @@ export default function Page() {
 
       {/* Scroll Velocity Text */}
       <VelocityScroll
-        text="CONFIDENTIAL • ENCRYPTED • NGO-VERIFIED • OPEN-SOURCE"
+        text={t('confidential_encrypted')}
         default_velocity={5}
         className="font-display text-center text-2xl font-bold tracking-wider text-white md:text-4xl md:leading-[3rem]"
       />
@@ -75,11 +77,11 @@ export default function Page() {
       {/* CTA */}
       <section className="relative my-20 rounded-3xl border border-white/10 backdrop-blur-sm p-10 text-center">
         <Reveal>
-          <h2 className="text-3xl md:text-4xl font-semibold text-white">Ready when you are.</h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/70">No account required. You control what to share.</p>
+          <h2 className="text-3xl md:text-4xl font-semibold text-white">{t('ready_when_you_are')}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-white/70">{t('no_account_required')}</p>
           <div className="mt-6">
             <Link href="/report/new" className="rounded-full bg-white px-5 py-2.5 text-black hover:bg-white/90 transition">
-              Start a report
+              {t('start_a_report')}
             </Link>
           </div>
         </Reveal>
@@ -89,41 +91,41 @@ export default function Page() {
       <section className="relative py-20 overflow-hidden">
         <div className="relative max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">About SafeSpeak</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">{t('about_safespeak')}</h2>
             <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto"></div>
           </div>
           
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h3 className="text-2xl font-semibold text-white">Our Mission</h3>
+              <h3 className="text-2xl font-semibold text-white">{t('our_mission')}</h3>
               <p className="text-white/80 leading-relaxed">
-                SafeSpeak is dedicated to providing a secure platform for individuals to report incidents anonymously while connecting them with verified support resources. We believe in empowering users through privacy-focused technology and community support.
+                {t('our_mission_desc')}
               </p>
               <div className="pt-4">
-                <h4 className="text-lg font-medium text-white mb-3">Key Features:</h4>
+                <h4 className="text-lg font-medium text-white mb-3">{t('key_features')}</h4>
                 <ul className="space-y-2">
                   <li className="flex items-center text-white/80">
                     <span className="w-1.5 h-1.5 rounded-full bg-purple-500 mr-2"></span>
-                    End-to-end encrypted reporting
+                    {t('end_to_end_encrypted_reporting')}
                   </li>
                   <li className="flex items-center text-white/80">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></span>
-                    AI-powered resource matching
+                    {t('ai_powered_resource_matching')}
                   </li>
                   <li className="flex items-center text-white/80">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
-                    No personal data collection
+                    {t('no_personal_data_collection')}
                   </li>
                   <li className="flex items-center text-white/80">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></span>
-                    Verified support network
+                    {t('verified_support_network')}
                   </li>
                 </ul>
               </div>
             </div>
             
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-              <h3 className="text-2xl font-semibold text-white mb-6">Why Choose SafeSpeak?</h3>
+              <h3 className="text-2xl font-semibold text-white mb-6">{t('why_choose_safespeak')}</h3>
               <div className="space-y-6">
                 <div className="flex items-start">
                   <div className="bg-purple-500/20 p-2 rounded-lg mr-4">
@@ -132,8 +134,8 @@ export default function Page() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-white">Secure & Private</h4>
-                    <p className="text-white/70 mt-1">Your privacy is our top priority. All reports are encrypted and anonymous.</p>
+                    <h4 className="text-lg font-medium text-white">{t('secure_private')}</h4>
+                    <p className="text-white/70 mt-1">{t('secure_private_desc')}</p>
                   </div>
                 </div>
                 
@@ -144,8 +146,8 @@ export default function Page() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-white">Fast Response</h4>
-                    <p className="text-white/70 mt-1">Get connected to support resources quickly when you need them most.</p>
+                    <h4 className="text-lg font-medium text-white">{t('fast_response')}</h4>
+                    <p className="text-white/70 mt-1">{t('fast_response_desc')}</p>
                   </div>
                 </div>
                 
@@ -156,8 +158,8 @@ export default function Page() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-white">Trusted Network</h4>
-                    <p className="text-white/70 mt-1">Verified organizations and resources you can rely on for support.</p>
+                    <h4 className="text-lg font-medium text-white">{t('trusted_network')}</h4>
+                    <p className="text-white/70 mt-1">{t('trusted_network_desc')}</p>
                   </div>
                 </div>
               </div>
@@ -165,13 +167,13 @@ export default function Page() {
           </div>
           
           <div className="mt-16 text-center">
-            <h3 className="text-2xl font-semibold text-white mb-6">Our Commitment</h3>
+            <h3 className="text-2xl font-semibold text-white mb-6">{t('our_commitment')}</h3>
             <p className="max-w-3xl mx-auto text-white/80 leading-relaxed">
-              At SafeSpeak, we're committed to creating a safer digital space for everyone. Our platform is built with cutting-edge security measures and designed with user privacy as the foundation. We continuously work to improve our services and expand our network of support resources.
+              {t('our_commitment_desc')}
             </p>
             <div className="mt-8">
               <a href="/about" className="inline-flex items-center text-white hover:text-white/80 transition-colors">
-                Learn more about our mission
+                {t('learn_more_mission')}
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>

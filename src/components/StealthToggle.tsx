@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+
 export default function StealthToggle() {
+  const { t } = useTranslation('common');
   const [stealth, setStealth] = useState(false);
   useEffect(() => {
     document.body.classList.toggle("stealth", stealth);
@@ -24,7 +27,7 @@ export default function StealthToggle() {
         </div>
       </div>
       <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors">
-        Stealth mode
+        {t('stealth_mode')}
       </span>
     </label>
   );

@@ -14,7 +14,8 @@ import {
   type Coords 
 } from "@/lib/geo";
 import { MasonryGrid, type MasonryCardData } from "@/components/ui/masonry-grid-with-scroll-animation";
-import { ParallaxBackground } from "@/components/ui/parallax-background";
+import InfiniteMenu from "@/components/InfiniteMenu";
+import Particles from "@/components/Particles";
 
 // Dynamic import for map component (client-only, no SSR)
 const ResourcesMap = dynamic(() => import("@/components/ResourcesMap"), {
@@ -405,71 +406,89 @@ export default function Resources() {
   }
 
   return (
-    <>
-      <ParallaxBackground />
-      <main className="w-full max-w-screen-2xl mx-auto p-6 space-y-6">
-      {/* Location Banner */}
-      {banner.isVisible && (
-        <div 
-          className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3"
-          role="alert"
-          aria-live="polite"
-        >
-          <div className="flex-1">
-            <p className="text-sm text-blue-800">
-              Share approximate location to sort nearby help. We only use this to find NGOs near you.
-            </p>
-            {banner.error && (
-              <p className="mt-1 text-sm text-red-600">{banner.error}</p>
-            )}
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <button
-              onClick={handleLocationRequest}
-              disabled={banner.isLoading}
-              className="px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
-              aria-label="Use my current location"
-            >
-              {banner.isLoading ? 'Detecting...' : 'Use my location'}
-            </button>
-            <button
-              onClick={() => setModal({ isOpen: true, cityInput: '' })}
-              className="px-3 py-1.5 text-sm font-medium bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              Enter city
-            </button>
-            <button
-              onClick={snoozeBanner}
-              className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800"
-              aria-label="Dismiss for 24 hours"
-            >
-              Not now
-            </button>
-          </div>
+    <div className="relative min-h-screen">
+      {/* Particles Background */}
+      <div className="fixed inset-0 z-0 bg-black">
+        <Particles
+          particleColors={['#ffffff', '#e0e7ff', '#c7d2fe']}
+          particleCount={150}
+          particleSpread={8}
+          speed={0.05}
+          particleBaseSize={80}
+          sizeRandomness={0.5}
+          moveParticlesOnHover={false}
+          alphaParticles={true}
+          cameraDistance={15}
+          disableRotation={false}
+        />
+      </div>
+      
+      {/* Main Content */}
+      <main className="relative z-10 max-w-4xl mx-auto p-6 space-y-6">
+        {/* Header */}
+        <div className="mt-6 flex items-center justify-between rounded-full border border-white/10 px-4 py-2 backdrop-blur max-w-fit">
+          <h1 className="font-semibold tracking-tight text-white">Find Help Near You</h1>
         </div>
-      )}
 
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold text-gray-900">Find Help Near You</h1>
-        
+        {/* Location Banner */}
+        {banner.isVisible && (
+          <div 
+            className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3"
+            role="alert"
+            aria-live="polite"
+          >
+            <div className="flex-1">
+              <p className="text-sm text-white/80">
+                Share approximate location to sort nearby help. We only use this to find NGOs near you.
+              </p>
+              {banner.error && (
+                <p className="mt-1 text-sm text-red-400">{banner.error}</p>
+              )}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <button
+                onClick={handleLocationRequest}
+                disabled={banner.isLoading}
+                className="rounded-full bg-white text-black px-4 py-2 font-medium hover:bg-white/90 disabled:bg-white/50 transition-colors"
+                aria-label="Use my current location"
+              >
+                {banner.isLoading ? 'Detecting...' : 'Use my location'}
+              </button>
+              <button
+                onClick={() => setModal({ isOpen: true, cityInput: '' })}
+                className="rounded-full border border-white/10 bg-white/10 backdrop-blur px-4 py-2 font-medium text-white hover:bg-white/20 transition-colors"
+              >
+                Enter city
+              </button>
+              <button
+                onClick={snoozeBanner}
+                className="rounded-full border border-white/10 bg-white/10 backdrop-blur px-4 py-2 font-medium text-white/60 hover:bg-white/20 transition-colors"
+                aria-label="Dismiss for 24 hours"
+              >
+                Not now
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Location Controls */}
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <button
               onClick={handleLocationRequest}
               disabled={banner.isLoading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+              className="rounded-full bg-white text-black px-6 py-3 font-medium hover:bg-white/90 disabled:bg-white/50 transition-colors"
               aria-label="Use my current location"
             >
               {banner.isLoading ? 'Detecting...' : 'Use my location'}
             </button>
             
-            <div className="text-sm text-gray-600 flex-1">
+            <div className="text-sm text-white/70 flex-1">
               {statusMsg || 'No location set'}
               {userLoc && (
                 <button 
                   onClick={clearLocation}
-                  className="ml-2 text-blue-600 hover:underline"
+                  className="ml-2 text-white/60 hover:text-white/80 underline"
                   aria-label="Clear location"
                 >
                   (clear)
@@ -480,35 +499,34 @@ export default function Resources() {
             <select
               value={Number.isFinite(radius) ? radius : 'all'}
               onChange={(e) => setRadius(e.target.value === 'all' ? Infinity : Number(e.target.value))}
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+              className="rounded-full border border-white/10 bg-white/10 backdrop-blur px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/20"
               aria-label="Search radius"
             >
-              <option value="all">All</option>
-              <option value={5}>5 km</option>
-              <option value={10}>10 km</option>
-              <option value={25}>25 km</option>
-              <option value={50}>50 km</option>
-              <option value={100}>100 km</option>
+              <option value="all" className="bg-gray-900">All</option>
+              <option value={5} className="bg-gray-900">5 km</option>
+              <option value={10} className="bg-gray-900">10 km</option>
+              <option value={25} className="bg-gray-900">25 km</option>
+              <option value={50} className="bg-gray-900">50 km</option>
+              <option value={100} className="bg-gray-900">100 km</option>
             </select>
           </div>
         </div>
-      </div>
 
       {/* City Input Modal */}
       {modal.isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           onClick={(e) => e.target === e.currentTarget && setModal(prev => ({ ...prev, isOpen: false }))}
           role="dialog"
           aria-modal="true"
           aria-labelledby="city-modal-title"
         >
-          <div className="bg-white rounded-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
-            <h2 id="city-modal-title" className="text-xl font-semibold mb-4">Find help near you</h2>
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <h2 id="city-modal-title" className="text-xl font-semibold mb-4 text-white">Find help near you</h2>
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="city-input" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="city-input" className="block text-sm font-medium text-white/80 mb-1">
                   Enter your city
                 </label>
                 <input
@@ -517,7 +535,7 @@ export default function Resources() {
                   value={modal.cityInput}
                   onChange={(e) => setModal(prev => ({ ...prev, cityInput: e.target.value, error: undefined }))}
                   placeholder="E.g., Delhi, Mumbai"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 rounded-xl border border-white/10 bg-white/10 backdrop-blur text-white placeholder-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
                   list="cities"
                   aria-describedby="city-hint"
                 />
@@ -526,21 +544,21 @@ export default function Resources() {
                     <option key={city} value={city} />
                   ))}
                 </datalist>
-                <p id="city-hint" className="mt-1 text-xs text-gray-500">
+                <p id="city-hint" className="mt-1 text-xs text-white/60">
                   Suggestions: Delhi, Mumbai, Chennai, Hyderabad, or any city name
                 </p>
                 {geocoding && (
-                  <p className="mt-1 text-xs text-blue-600">Searching...</p>
+                  <p className="mt-1 text-xs text-blue-400">Searching...</p>
                 )}
                 {geocodedCity && (
-                  <p className="mt-1 text-xs text-green-600">
+                  <p className="mt-1 text-xs text-green-400">
                     ✓ Found: {geocodedCity.name}
                   </p>
                 )}
                 {modal.error && (
-                  <p className="mt-1 text-sm text-red-600">{modal.error}</p>
+                  <p className="mt-1 text-sm text-red-400">{modal.error}</p>
                 )}
-                <p className="mt-2 text-xs text-gray-500 italic">
+                <p className="mt-2 text-xs text-white/60 italic">
                   May be approximate; we only store coarse location (~110m precision).
                 </p>
               </div>
@@ -548,14 +566,14 @@ export default function Resources() {
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={() => setModal(prev => ({ ...prev, isOpen: false }))}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300"
+                  className="rounded-full border border-white/10 bg-white/10 backdrop-blur px-4 py-2 text-sm font-medium text-white hover:bg-white/20 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCitySubmit}
                   disabled={!modal.cityInput.trim()}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+                  className="rounded-full bg-white text-black px-4 py-2 text-sm font-medium hover:bg-white/90 disabled:bg-white/50 transition-colors"
                 >
                   Use city
                 </button>
@@ -568,16 +586,16 @@ export default function Resources() {
       {/* Results */}
       {loading ? (
         <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading resources…</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/50 mx-auto"></div>
+          <p className="mt-2 text-white/60">Loading resources…</p>
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="text-center py-8 bg-white rounded-lg border border-gray-200">
-          <p className="text-gray-600">No NGOs found within {radius} km.</p>
+        <div className="text-center py-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
+          <p className="text-white/60">No NGOs found within {radius} km.</p>
           {radius < 1000 && (
             <button
               onClick={() => setRadius(1000)}
-              className="mt-2 text-blue-600 hover:underline text-sm"
+              className="mt-2 text-white/80 hover:text-white underline text-sm"
             >
               Show all NGOs
             </button>
@@ -586,38 +604,38 @@ export default function Resources() {
       ) : (
         <div className="space-y-4">
           {/* Control Bar */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex flex-wrap items-center gap-3 text-sm">
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4 flex flex-wrap items-center gap-3 text-sm">
             <div className="flex items-center gap-2">
-              <span className="font-medium text-gray-700">Show:</span>
+              <span className="font-medium text-white/80">Show:</span>
               <select
                 value={Number.isFinite(perPage) ? perPage : 'all'}
                 onChange={(e) => setPerPage(e.target.value === 'all' ? Infinity : Number(e.target.value))}
-                className="px-2 py-1 border border-gray-300 rounded text-sm"
+                className="rounded-full border border-white/10 bg-white/10 backdrop-blur px-3 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/20"
               >
-                <option value="all">All</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
+                <option value="all" className="bg-gray-900">All</option>
+                <option value={25} className="bg-gray-900">25</option>
+                <option value={50} className="bg-gray-900">50</option>
+                <option value={100} className="bg-gray-900">100</option>
               </select>
             </div>
             
-            <div className="text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{visibleItems.length}</span> of{' '}
-              <span className="font-semibold text-gray-900">{filteredItems.length}</span>
+            <div className="text-white/60">
+              Showing <span className="font-semibold text-white">{visibleItems.length}</span> of{' '}
+              <span className="font-semibold text-white">{filteredItems.length}</span>
               {filteredItems.length !== items.length && (
-                <span> (Total: <span className="font-semibold text-gray-900">{items.length}</span>)</span>
+                <span> (Total: <span className="font-semibold text-white">{items.length}</span>)</span>
               )}
             </div>
             
             {lastUpdated && (
-              <div className="text-xs text-gray-500 ml-auto">
+              <div className="text-xs text-white/60 ml-auto">
                 Updated {Math.floor((Date.now() - lastUpdated) / 60000)} min ago
                 <button
                   onClick={() => {
                     localStorage.removeItem('resourcesCache');
                     window.location.reload();
                   }}
-                  className="ml-2 text-blue-600 hover:underline"
+                  className="ml-2 text-white/80 hover:text-white underline"
                 >
                   Clear cache
                 </button>
@@ -626,12 +644,12 @@ export default function Resources() {
           </div>
 
           {/* View Toggle and Header */}
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+            <h2 className="text-2xl font-bold text-white">
               {filteredItems.length} {filteredItems.length === 1 ? 'Resource' : 'Resources'} Found
             </h2>
             {userLoc && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 Showing results near your location
               </p>
             )}
@@ -639,16 +657,16 @@ export default function Resources() {
 
           {/* Top 5 Nearest NGOs with Pin Markers */}
           {userLoc && filteredItems.length > 0 && (
-            <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
                 Top 5 Nearest Resources
               </h3>
               <div className="space-y-3">
                 {filteredItems.slice(0, 5).map((ngo, index) => (
-                  <div key={ngo.id} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                  <div key={ngo.id} className="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4 hover:bg-white/10 transition-all">
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0">
                         <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
@@ -657,15 +675,15 @@ export default function Resources() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold text-gray-900 truncate">{ngo.name}</h4>
+                          <h4 className="font-semibold text-white truncate">{ngo.name}</h4>
                           {ngo.verified && (
-                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800 flex-shrink-0">
+                            <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400 flex-shrink-0">
                               ✓ Verified
                             </span>
                           )}
                         </div>
                         {ngo.distanceKm !== undefined && (
-                          <p className="text-sm text-gray-600 mb-2">
+                          <p className="text-sm text-white/60 mb-2">
                             📍 {formatDistance(ngo.distanceKm)} away
                           </p>
                         )}
@@ -673,7 +691,7 @@ export default function Resources() {
                           {ngo.contact && (
                             <a
                               href={`tel:${ngo.contact}`}
-                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors"
+                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-400 bg-blue-500/20 rounded-lg hover:bg-blue-500/30 transition-colors"
                             >
                               📞 Call Now
                             </a>
@@ -683,7 +701,7 @@ export default function Resources() {
                               href={`https://www.google.com/maps/search/?api=1&query=${ngo.lat},${ngo.lng}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white/80 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
                             >
                               🗺️ Directions
                             </a>
@@ -699,9 +717,9 @@ export default function Resources() {
 
           {/* Interactive Map */}
           {filteredItems.some(ngo => ngo.lat !== null && ngo.lng !== null) && (
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg className="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+            <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-6">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clipRule="evenodd" />
                 </svg>
                 Interactive Map View
@@ -723,8 +741,20 @@ export default function Resources() {
             </div>
           )}
 
-          {/* All Resources List */}
-          <MasonryGrid items={masonryItems} />
+          {/* All Resources List - 3D Infinite Menu */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden">
+            <div style={{ height: '600px', position: 'relative' }}>
+              <InfiniteMenu 
+                items={filteredItems.map(ngo => ({
+                  name: ngo.name,
+                  description: ngo.description || 'Help organization providing support',
+                  contact: ngo.contact,
+                  distanceKm: ngo.distanceKm,
+                  verified: ngo.verified
+                }))}
+              />
+            </div>
+          </div>
         </div>
       )}
 
@@ -737,6 +767,6 @@ export default function Resources() {
         />
       )}
     </main>
-    </>
+    </div>
   );
 }
